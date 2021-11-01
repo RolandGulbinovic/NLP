@@ -10,7 +10,22 @@ import pandas as pd
 
 from scraping import get_markes, get_modeliai, get_category, get_detales
 
-def GUI(mark_list, mark_title):
+
+
+def GUI(mark_list, mark_title, ft):
+    def get_tokens(words):
+        tokens = words.split()
+        return tokens
+
+    def relevant_words(searching):
+        relevant_words = []
+        for i in searching:
+            relevant_words += ft.get_nearest_neighbors(i, k = 20)
+
+        for i in range(len(relevant_words)):
+            relevant_words[i] = relevant_words[i][1]
+        return relevant_words
+    
     def mark_changed(event):
         global model_title
         model_title, x = get_modeliai(Combo_mark.get(), mark_title)
@@ -24,9 +39,6 @@ def GUI(mark_list, mark_title):
             listbox.delete(i)
         for i in range(len(x)):
             listbox.insert(i, x[i])
-
-    def category_changed(event):
-        global detales
 
     root = tk.Tk()
     root.geometry("500x500")
@@ -76,7 +88,6 @@ def GUI(mark_list, mark_title):
 
     listbox = tk.Listbox(root, width = 47, selectmode = "SINGLE")
     listbox.place(relx = 0, rely = 0.65)
-    #listbox.bind('<<ListboxSelect>>', category_changed)
 
 
     def Load_data():
@@ -92,13 +103,52 @@ def GUI(mark_list, mark_title):
         df_rows = detales.to_numpy().tolist()
         for row in df_rows:
             tv1.insert("", "end", values=row)
+            
         return None
-
     def Search():
         clear_data()
-        a = str(search.get())
-        d1 = detales[detales['Detalė'].str.contains(a)]
+        
+        searching = str(search.get())
+        detales = get_detales(listbox.get("anchor"), Combo_mark.get(), parts_title)
+        
+        
+        d1 = pd.DataFrame()
+        search_tokens = []
+        search_tokens.append(get_tokens(searching))
+        relevant_word = relevant_words(search_tokens[0])
+        
+        k = 0
+        match_index = set()
+        for value in detales.Detalė.values:
+            for i in value.split():
+                if i in search_tokens[0]:
+                    match_index.add(k)
+                if i in relevant_word:
+                    match_index.add(k)
+            k += 1
 
+        #k = 0
+        for value in detales.daugiau_info.values:
+            for i in value:
+                if i in search_tokens[0]:
+                    match_index.add()
+                if i in relevant_word:
+                    match_index.add(k)
+            k += 1
+
+        k = 0
+        for value in detales.Info.values:
+            for i in value.split():
+                if i in search_tokens[0]:
+                    match_index.add(k)
+                if i in relevant_word:
+                    match_index.add(k)
+            k += 1
+            
+        for i in match_index:
+            d1 = d1.append(detales.iloc[i])
+        
+        
         tv1["column"] = list(d1.columns)
         tv1["show"] = "headings"
         for column in tv1["column"]:
@@ -114,3 +164,5 @@ def GUI(mark_list, mark_title):
 
 
     root.mainloop()
+    
+    
