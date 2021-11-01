@@ -37,7 +37,7 @@ def GUI(mark_list, mark_title):
     frame1.place(height=250, width=500)
 
     file_frame = tk.LabelFrame(root, text = "Ieskoti")
-    file_frame.place(height = 100, width = 250, rely=0.50,relx = 0.50)
+    file_frame.place(height = 100, width = 200, rely=0.50,relx = 0.60)
 
     ##
     tv1 = ttk.Treeview(frame1)
@@ -74,8 +74,8 @@ def GUI(mark_list, mark_title):
     Combo_model.bind('<<ComboboxSelected>>', model_changed)
     ## Model
 
-    listbox = tk.Listbox(root, width = 35, selectmode = "SINGLE")
-    listbox.place(relx = 0.05, rely = 0.65)
+    listbox = tk.Listbox(root, width = 47, selectmode = "SINGLE")
+    listbox.place(relx = 0, rely = 0.65)
     #listbox.bind('<<ListboxSelect>>', category_changed)
 
 

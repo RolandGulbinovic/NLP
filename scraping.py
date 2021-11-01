@@ -110,7 +110,7 @@ def get_detales(x, marke, parts):
         price = e + k
         kainos.append(price)
     
-
+    
     
     detales_info = [i for i in parts_detales if i.startswith(marke)]
 
@@ -120,4 +120,44 @@ def get_detales(x, marke, parts):
         "Info": detales_info,
         "Nuoroda": links,
     })
+    detales_info_list = []
+    
+    for inp in range(len(detales)):
+        pasirinkta_preke = detales.loc[inp, 'Nuoroda']
+
+        page = requests.get(pasirinkta_preke)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        detailed_info = soup.select(".product_desc .product_details")
+
+        detailed_test = [sd.get_text() for sd in soup.select(".product_desc .product_details")]
+        detailed_test = re.sub("\n", "|", detailed_test[1])
+        detailed_test = detailed_test.split("|")
+        
+        del detailed_test[detailed_test == '']
+        detales_info_dict = {}
+        detales_info_list2 = []
+        k = 0
+        
+        detales_info_list.append(detailed_test)
+        
+     #  for i in range(len(detailed_test)):
+           #if k >= len(detailed_test)-1 :
+                #reak
+            #rint(detailed_test[k] + ": " + detailed_test[k+1])
+            # += 2
+        #etales_info_list.append(detales_info_list2)
+        
+   #detales["daugiau_info"] = detales_info_list
+    
+    
+        #or i in range(len(detailed_test)):
+        #   if k >= len(detailed_test)-1 :
+        #       break
+        #   print(detailed_test[k] + ": " + detailed_test[k+1])
+        #   k += 2
+        #etales_info_list.append(detales_info_list2)
+        
+    detales["daugiau_info"] = detales_info_list
+    
     return detales
