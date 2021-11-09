@@ -19,7 +19,7 @@ def GUI(mark_list, mark_title, ft):
             relevant_word_list += ft.get_nearest_neighbors(i, k = 10)
 
         for i in range(len(relevant_word_list)):
-            relevant_word_list[i] = relevant_words[i][1].lower()
+            relevant_word_list[i] = relevant_word_list[i][1].lower()
             
         return relevant_word_list
     
@@ -36,7 +36,17 @@ def GUI(mark_list, mark_title, ft):
             listbox.delete(i)
         for i in range(len(x)):
             listbox.insert(i, x[i])
-
+    
+    def vidurkis(x):
+        mean = 0
+        n = len(x)
+        for i in x:
+            mean += i
+        
+        mean = mean/n
+    
+        return mean
+    
     root = tk.Tk()
     root.geometry("500x500")
     root.pack_propagate(False)
@@ -54,7 +64,13 @@ def GUI(mark_list, mark_title, ft):
 
     search = tk.Entry(file_frame, width = 15)
     search.place(rely=0.40, relx = 0.25)
-
+    
+    metai = tk.Entry(root, width = 15)
+    metai.place(rely=0.58, relx = 0.60)
+    
+    filter_metai = tk.Button(root, text = "vidurki", command=lambda: vidurkiai())
+    filter_metai.place(rely=0.59, relx=0.80)
+    
     treescrolly = tk.Scrollbar(frame1, orient="vertical", command=tv1.yview)
     treescrollx = tk.Scrollbar(frame1, orient="horizontal", command=tv1.xview)
     tv1.configure(xscrollcommand=treescrollx.set, yscrollcommand=treescrolly.set)
@@ -176,8 +192,35 @@ def GUI(mark_list, mark_title, ft):
             tv1.insert("", "end", values=row)
         return None
     
+    def vidurkiai():
+        pas_metai = str(metai.get())
+        
+        indexai = []
+        metai_visi = []
+        for i in detales.daugiau_info.values:
+            metai_visi.append(i[9])
+
+        for idx, m in enumerate(metai_visi):
+            if m == pas_metai:
+                indexai.append(idx)
+        
+
+        test_detales = pd.DataFrame()
+        
+        for i in indexai:
+            test_detales = test_detales.append(detales.iloc[i])
+
+        vid = []
+        for i in test_detales.Kaina.values:
+            i = float(i[1:])
+            vid.append(i)
+        
+        mean = vidurkis(vid)
+        mean = format(mean, '.2f')
+        messagebox.showinfo("Informacija", "{year} metų šios prekės vidurkis yra: {price} eurų".format(year = pas_metai, price = mean))
+        
     # Istrinti senus duomenys
-    def clear_data():
+    def clear_data():s
         tv1.delete(*tv1.get_children())
 
 
